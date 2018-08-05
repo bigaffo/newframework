@@ -5,13 +5,30 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class Base {
 	
-	public WebDriver testing() {
-		System.setProperty("webdriver.chrome.driver", "C:\\driver_hub\\chromedriver.exe");
-		//	System.setProperty("webdriver.gecko.driver", "C:\\driver_hub\\geckodriver.exe");
-			WebDriver driver = new ChromeDriver();
-			return driver;
-	}
+	protected WebDriver driver;
+
+	
+
+	
+
+	public Base(WebDriver driver) {
+		this.driver = driver;
 		
+	
+		
+		
+	}
+	
+	public LoginPage openBrowser(String baseUrl) {
+		driver.manage().window().maximize();
+		driver.navigate().to(baseUrl);
+		return new LoginPage(driver);
+	}
+	
+	public void tearDown() {
+		driver.quit();
+	}	
+	
 			
 	}
 		
