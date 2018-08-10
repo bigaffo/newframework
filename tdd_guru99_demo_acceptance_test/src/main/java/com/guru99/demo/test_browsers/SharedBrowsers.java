@@ -11,14 +11,21 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.guru99.demo.pages_objects.BasePage;
+
 public class SharedBrowsers {
 //	TestLogger
-	private WebDriver driver;
+	private static WebDriver driver;
 	private FileInputStream fis;
 	private Properties config = new Properties();
 	protected static Logger logger = LogManager.getLogger("TestLogger");
 	
-	public void initialiseBrowser() throws Exception {
+	public WebDriver getDriver() {
+		return driver;
+		
+	}
+	
+	public SharedBrowsers initialiseBrowser() throws Exception {
 		if(driver == null) {
 			try {
 				fis = new FileInputStream(System.getProperty("user.dir")+ "\\src\\main\\resources\\environment_testdata.properties");
@@ -32,7 +39,7 @@ public class SharedBrowsers {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(config.getProperty("browser").equals("chrome")) {
+			if(config.getProperty("browser").contains("chrome")) {
 				System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir")+ "\\driver_browser\\chromedriver.exe");
 				driver = new ChromeDriver();
 			}else if(config.getProperty("browser").equals("firefox")) {
@@ -42,16 +49,19 @@ public class SharedBrowsers {
 				throw new Exception("Your browser is not supported on this framwork");
 			}
 		}
+		return new SharedBrowsers();
+		
 	}
-	public void setupBrowser() {
+	public BasePage setupBrowser() {
 		try {
 		driver.manage().deleteAllCookies();
 		logger.info("All cookies deleted successfully");
 		driver.manage().window().maximize();
 		logger.info("Browser has been maximized successfully");
 		}catch(Exception e) {
-			logger.error("Browser failed setup with this meassage: ", e);
+			logger.error("Browser failed setup with this meassage: "+e);
 		}
+		return new BasePage(driver);
 	}
 	public void tearDownBrowser() {
 		try {
@@ -60,10 +70,10 @@ public class SharedBrowsers {
 				logger.info("Setup successfully closed");
 			}
 		}catch(Exception e){
-			logger.error("Setup failed to close due to error message: ", e);
+			logger.error("Setup failed to close due to error message: "+e);
 				
 				
 			}
 		}
 	}
-
+ 
